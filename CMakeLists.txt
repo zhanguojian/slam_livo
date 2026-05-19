@@ -75,6 +75,11 @@ else()
   message(STATUS "mimalloc not found, proceeding without it")
 endif()
 
+#环境中设置了pcl_root变量不加编译找不到会报预警
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
+
 # Find ament and required dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
