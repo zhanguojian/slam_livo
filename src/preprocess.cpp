@@ -232,8 +232,6 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
     sensor_msgs::PointCloud2ConstIterator<float> iter_y(*msg, "y");
     sensor_msgs::PointCloud2ConstIterator<float> iter_z(*msg, "z");
     sensor_msgs::PointCloud2ConstIterator<float> iter_i(*msg, "intensity");
-    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter_tag(*msg, "tag");
-    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter_line(*msg, "line");
     sensor_msgs::PointCloud2ConstIterator<double> iter_t(*msg, "timestamp");
 
     uint valid_num = 0;
@@ -243,13 +241,10 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
 
     for (size_t i = 0;
          i < plsize;
-         ++i, ++iter_x, ++iter_y, ++iter_z, ++iter_i, ++iter_tag, ++iter_line, ++iter_t)
+         ++i, ++iter_x, ++iter_y, ++iter_z, ++iter_i, ++iter_t)
     {
-      const uint8_t line = *iter_line;
-      const uint8_t tag = *iter_tag;
 
-      if (line < N_SCANS) 
-      {
+ 
         valid_num++;
 
         PointType p;
@@ -297,7 +292,7 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
             pl_surf.push_back(p);
           }
         }
-      }
+      
     }
   }
 
