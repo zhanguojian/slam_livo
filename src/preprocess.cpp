@@ -1003,6 +1003,7 @@ void Preprocess::give_feature(pcl::PointCloud<PointType> &pl, vector<orgtype> &t
         ap.x = pl[j].x;
         ap.y = pl[j].y;
         ap.z = pl[j].z;
+        ap.intensity = pl[j].intensity;
         ap.curvature = pl[j].curvature;
         pl_surf.push_back(ap);
 
