@@ -80,7 +80,7 @@ cd ~/livo_ws/src
 git clone  https://github.com/zhanguojian/slam_livo-2.git
 cd ../
 colcon build --symlink-install --continue-on-error
-source ~/里vox/install/setup.bash
+source ~/livo_ws/install/setup.bash
 ```
 
 ### Run the demo
