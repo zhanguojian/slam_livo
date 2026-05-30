@@ -11,6 +11,7 @@ which is included as part of this source code package.
 */
 
 #include "preprocess.h"
+#include <cmath>
 
 #define RETURN0 0x00
 #define RETURN0AND1 0x10
@@ -125,28 +126,38 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
     sensor_msgs::PointCloud2ConstIterator<float> iter_y(*msg, "y");
     sensor_msgs::PointCloud2ConstIterator<float> iter_z(*msg, "z");
     sensor_msgs::PointCloud2ConstIterator<float> iter_i(*msg, "intensity");
-    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter_tag(*msg, "tag");
-    sensor_msgs::PointCloud2ConstIterator<uint8_t> iter_line(*msg, "line");
     sensor_msgs::PointCloud2ConstIterator<double> iter_t(*msg, "timestamp");
 
     PointType last_point;
     bool has_last_point = false;
 
+    const int line = 0;
+
+    
+
     for (size_t i = 0;
          i < plsize;
-         ++i, ++iter_x, ++iter_y, ++iter_z, ++iter_i, ++iter_tag, ++iter_line, ++iter_t)
+         ++i, ++iter_x, ++iter_y, ++iter_z, ++iter_i, ++iter_t)
     {
-      const uint8_t line = *iter_line;
-      const uint8_t tag = *iter_tag;
 
-      if (line < N_SCANS)
-      {
+ 
         PointType p;
 
         p.x = *iter_x;
         p.y = *iter_y;
         p.z = *iter_z;
         p.intensity = *iter_i;
+
+        // 过滤盲区点
+        const double range =
+            static_cast<double>(p.x) * p.x +
+            static_cast<double>(p.y) * p.y +
+            static_cast<double>(p.z) * p.z;
+
+        if (range < blind_sqr)
+        {
+          continue;
+        }
 
         // timestamp 是绝对时间，单位 ns
         // curvature 保存相对当前帧起点的时间，单位 ms
@@ -171,7 +182,9 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
           last_point = p;
           has_last_point = true;
         }
-      }
+
+        
+      
     }
 
     static int count = 0;
@@ -181,7 +194,7 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
 
     double t0 = omp_get_wtime();
 
-    for (int j = 0; j < N_SCANS; j++)
+    for (int j = 0; j < 1; j++)
     {
       if (pl_buff[j].size() <= 5) continue;
 

@@ -28,8 +28,8 @@
       filter_size_surf: 0.1
       lidar_type: 1 # Livox Avia LiDAR
       scan_line: 4
-      blind_sqr: 1.0
-      feature_extract_enabled: false
+      blind_sqr: 0.8
+      feature_extract_enabled: true
 
     vio:
       max_iterations: 5
