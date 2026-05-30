@@ -15,7 +15,7 @@ which is included as part of this source code package.
 #define RETURN0 0x00
 #define RETURN0AND1 0x10
 
-Preprocess::Preprocess() : feature_enabled(0), lidar_type(livox), blind(0.01), point_filter_num(1)
+Preprocess::Preprocess() : feature_enabled(0), lidar_type(livox), blind_sqr(0.01), point_filter_num(1)
 {
   inf_bound = 10;
   N_SCANS = 4;
@@ -47,7 +47,7 @@ void Preprocess::set(bool feat_en, int lid_type, double bld, int pfilt_num)
 {
   feature_enabled = feat_en;
   lidar_type = lid_type;
-  blind = bld;
+  blind_sqr = bld;
   point_filter_num = pfilt_num;
 }
 
@@ -244,7 +244,6 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
          ++i, ++iter_x, ++iter_y, ++iter_z, ++iter_i, ++iter_t)
     {
 
- 
         valid_num++;
 
         PointType p;
@@ -253,7 +252,12 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
         p.y = *iter_y;
         p.z = *iter_z;
         p.intensity = *iter_i;
-
+        
+        if( p.z < -2 )
+        {
+          continue;
+        };
+        
         float raw_curvature =
             static_cast<float>((*iter_t - frame_start_ns) / 1e6);
 
@@ -278,7 +282,6 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
           last_curvature = p.curvature;
         }
 
-        pl_full[i] = p;
 
         if (valid_num % point_filter_num == 0)
         {
@@ -286,10 +289,13 @@ void Preprocess::livox_handler(const sensor_msgs::msg::PointCloud2::ConstSharedP
               p.x * p.x +
               p.y * p.y +
               p.z * p.z;
+              
 
           if (range >= blind_sqr)
           {
             pl_surf.push_back(p);
+            // pl_full[i] = p;
+ 
           }
         }
       
