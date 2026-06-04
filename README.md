@@ -77,7 +77,7 @@ Clone the repository and colcon build:
 
 ```
 cd ~/livo_ws/src
-git clone  https://github.com/zhanguojian/slam_livo-2.git
+git clone  https://github.com/zhanguojian/slam_livo.git
 cd ../
 colcon build --symlink-install --continue-on-error
 source ~/livo_ws/install/setup.bash
