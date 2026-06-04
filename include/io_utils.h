@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include <rosbag/bag.h>
-#include <rosbag/view.h>
+#include <rosbag2_cpp/reader.hpp>
+#include <rosbag2_cpp/view.hpp>
+#include <rosbag2_storage/serialized_bag_message.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -18,7 +19,7 @@ class RosbagIO {
        explicit RosbagIO(std::string bag_filename) 
        {
         assert(bag_filename != "");
-        bag_path_ = std::string(ROOT_DIR) + "/data/" + "bag/" + bag_filename + ".bag";
+        bag_path_ = std::string(ROOT_DIR) + "/data/" + "bag/" + bag_filename + ".db3";
   
        }
        
@@ -70,10 +71,9 @@ class RosbagIO {
         return AddHandle(topic_name, [f](const rosbag2_storage::SerializedBagMessageSharedPtr m) -> bool{
             //rosbag2_storage::SerializedBagMessageSharedPtr 是rosbag2的序列化消息指针
             rclcpp::SerializedMessage serialized_msg(m->serialized_data);
-            sensor_msgs::msg::PointCloud2::SharedPtr msg;
+            auto msg = std::make_shared<sensor_msgs::msg::PointCloud2>();
             //serializer是rosbag2的序列化器
-            rclcpp::Serialization<sensor_msgs::msg::PointCloud2> serializer;
-            serializer.deserialize_message(&serialized_msg, msg);
+            point_cloud_serializer_.deserialize_message(&serialized_msg, msg);
             if(msg == nullptr) return false;
             return f(msg);
         } );
@@ -84,10 +84,9 @@ class RosbagIO {
         return AddHandle(topic_name, [f](const rosbag2_storage::SerializedBagMessageSharedPtr m) -> bool{
             //rosbag2_storage::SerializedBagMessageSharedPtr 是rosbag2的序列化消息指针
             rclcpp::SerializedMessage serialized_msg(m->serialized_data);
-            sensor_msgs::msg::Imu::SharedPtr msg;
+            auto msg = std::make_shared<sensor_msgs::msg::Imu>();
             //serializer是rosbag2的序列化器
-            rclcpp::Serialization<sensor_msgs::msg::Imu> serializer;
-            serializer.deserialize_message(&serialized_msg, msg);
+            imu_serializer_.deserialize_message(&serialized_msg, msg);
             if(msg == nullptr) return false;
             return f(msg);
         } );
@@ -98,11 +97,9 @@ class RosbagIO {
         RosbagIO &AddImageHandle(const std::string &topic_name, ImageHandle f){
         return AddHandle(topic_name, [f](const rosbag2_storage::SerializedBagMessageSharedPtr m) -> bool{
             //rosbag2_storage::SerializedBagMessageSharedPtr 是rosbag2的序列化消息指针
-            rclcpp::SerializedMessage serialized_msg(m->serialized_data);
-            sensor_msgs::msg::Image::SharedPtr msg;
+            auto msg = std::make_shared<sensor_msgs::msg::Image>();
             //serializer是rosbag2的序列化器
-            rclcpp::Serialization<sensor_msgs::msg::Image> serializer;
-            serializer.deserialize_message(&serialized_msg, msg);
+            image_serializer_.deserialize_message(&serialized_msg, msg);
             if(msg == nullptr) return false;
             return f(msg);
         } );

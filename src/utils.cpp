@@ -1,6 +1,6 @@
 // utils.cpp
 
-#include "include/io_utils.h"
+#include "io_utils.h"
 #include <vector>
 #include <cstdint> // for int64_t
 #include <limits>  // for std::numeric_limits
@@ -24,7 +24,17 @@ void RosbagIO::go(){
 
     std::cout << "开始读取bag文件: " << bag_path_ << std::endl;
 
-    bag_reader_.open(bag_path_);
+    rosbag2_storage::StorageOptions storage_options;
+    storage_options.uri = bag_path_;
+    storage_options.storage_id = "sqlite3";
+
+    rosbag2_cpp:ConverterOptions converter_options;
+    converter_options.input_serialization_format = "cdr";
+    converter_options.output_serialization_format = "cdr";
+    rosbag2_cpp::ConverterFactory converter_factory;
+    auto converter = converter_factory.load_converter(converter_options);
+    rosbag2_cpp::Reader reader;
+    reader.open(storage_options, converter);
     
     printfBagMetaInfo();
 
