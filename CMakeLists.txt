@@ -104,6 +104,7 @@ find_package(fmt REQUIRED)
 
 find_package(rosbag2_cpp REQUIRED)
 find_package(rosbag2_storage REQUIRED)
+find_package(rcl REQUIRED)
 
 # Include directories for dependencies
 include_directories(
@@ -132,6 +133,7 @@ set(dependencies
   tf2_ros
   rosbag2_cpp
   rosbag2_storage
+  rcl
 )
 
 set(COMMON_DEPENDENCIES OpenMP::OpenMP_CXX fmt::fmt)
@@ -149,7 +151,7 @@ add_library(imu_proc src/IMU_Processing.cpp)
 add_library(laser_mapping src/LIVMapper.cpp)
 add_library(utils src/utils.cpp)
 
-ament_target_dependencies(utils ${add_dependencies})
+ament_target_dependencies(utils ${dependencies})
 
 ament_target_dependencies(vio ${dependencies} )
 ament_target_dependencies(lio ${dependencies})

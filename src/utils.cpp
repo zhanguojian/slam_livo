@@ -28,23 +28,17 @@ void RosbagIO::go(){
     storage_options.uri = bag_path_;
     storage_options.storage_id = "sqlite3";
 
-    rosbag2_cpp:ConverterOptions converter_options;
+    rosbag2_cpp::ConverterOptions converter_options;
     converter_options.input_serialization_format = "cdr";
     converter_options.output_serialization_format = "cdr";
-    rosbag2_cpp::ConverterFactory converter_factory;
-    auto converter = converter_factory.load_converter(converter_options);
     rosbag2_cpp::Reader reader;
-    reader.open(storage_options, converter);
+    reader_.open(storage_options, converter_options);
     
     printfBagMetaInfo();
 
-    if(!bag_reader_.is_open()){
-        std::cerr << "无法打开bag文件;文件路径错误: " << bag_path_ << std::endl;
-        return;
-    }
 
     while(rclcpp::ok()){
-        auto message = bag_reader_.read_next();
+        auto message = reader_.read_next();
         if(message == nullptr){
             break;
         }
@@ -54,7 +48,7 @@ void RosbagIO::go(){
         }
     }
 
-    bag_reader_.close();
+    reader_.close();
     std::cout << "读取bag文件完成" << std::endl;
     std::cout << "总消息数: " << total_message_count_ << std::endl;
     std::cout << "已读消息数: " << read_message_count_ << std::endl;
