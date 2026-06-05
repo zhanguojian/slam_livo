@@ -115,6 +115,8 @@ void LIVMapper::readParameters(rclcpp::Node::SharedPtr &node)
   this->node->declare_parameter<int>("publish.pub_scan_num", 1);
   this->node->declare_parameter<bool>("publish.pub_effect_point_en", false);
   this->node->declare_parameter<bool>("publish.dense_map_en", false);
+  this->node->declare_parameter<bool>("common.use_bag", false);
+  this->node->declare_parameter<std::string>("common.bag_name",bag_name_);
 
   // get parameter
   this->node->get_parameter("common.lid_topic", lid_topic);
@@ -174,6 +176,9 @@ void LIVMapper::readParameters(rclcpp::Node::SharedPtr &node)
   this->node->get_parameter("publish.pub_scan_num", pub_scan_num);
   this->node->get_parameter("publish.pub_effect_point_en", pub_effect_point_en);
   this->node->get_parameter("publish.dense_map_en", dense_map_en);
+  this->node->get_parameter("common.use_bag", use_bag_);
+  this->node->get_parameter("common.bag_name", bag_name_);
+
 }
 
 void LIVMapper::initializeComponents(rclcpp::Node::SharedPtr &node) 
@@ -608,6 +613,36 @@ void LIVMapper::savePCD()
 
 void LIVMapper::run(rclcpp::Node::SharedPtr &node) 
 {
+  if (use_bag_) {
+    // 离线模式：用单独线程顺序读 bag，把消息喂给已有回调
+    std::thread bag_thread([this]() {
+      RosbagIO bag(bag_name_);
+      if (lidar_en)
+        bag.AddPointCloudHandle(lid_topic,
+          [this](const sensor_msgs::msg::PointCloud2::ConstSharedPtr &m) {
+            standard_pcl_cbk(m); return true; });
+      if (imu_en)
+        bag.AddImuHandle(imu_topic,
+          [this](const sensor_msgs::msg::Imu::ConstSharedPtr &m) {
+            imu_cbk(m); return true; });
+      if (img_en)
+        bag.AddImageHandle(img_topic,
+          [this](const sensor_msgs::msg::Image::ConstSharedPtr &m) {
+            img_cbk(m); return true; });
+      bag.go();
+    });
+    rclcpp::Rate rate(5000);
+    while (rclcpp::ok()) {
+      if (!sync_packages(LidarMeasures)) { rate.sleep(); continue; }
+      handleFirstFrame();
+      processImu();
+      stateEstimationAndMapping();
+    }
+    if (bag_thread.joinable()) bag_thread.join();
+    savePCD();
+    return;
+  }
+
   rclcpp::Rate rate(5000);
   while (rclcpp::ok()) 
   {

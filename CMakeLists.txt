@@ -102,6 +102,9 @@ find_package(Sophus REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(fmt REQUIRED)
 
+find_package(rosbag2_cpp REQUIRED)
+find_package(rosbag2_storage REQUIRED)
+
 # Include directories for dependencies
 include_directories(
   ${EIGEN3_INCLUDE_DIR}
@@ -127,6 +130,8 @@ set(dependencies
   pcl_ros
   pcl_conversions
   tf2_ros
+  rosbag2_cpp
+  rosbag2_storage
 )
 
 set(COMMON_DEPENDENCIES OpenMP::OpenMP_CXX fmt::fmt)
@@ -143,6 +148,8 @@ add_library(pre src/preprocess.cpp)
 add_library(imu_proc src/IMU_Processing.cpp)
 add_library(laser_mapping src/LIVMapper.cpp)
 add_library(utils src/utils.cpp)
+
+ament_target_dependencies(utils ${add_dependencies})
 
 ament_target_dependencies(vio ${dependencies} )
 ament_target_dependencies(lio ${dependencies})
@@ -173,6 +180,7 @@ target_link_libraries(fastlivo_mapping
   lio
   pre
   imu_proc
+  utils
   ${PCL_LIBRARIES}
   ${OpenCV_LIBRARIES}
   ${Sophus_LIBRARIES}
