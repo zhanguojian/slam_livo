@@ -149,7 +149,7 @@ add_library(imu_proc src/IMU_Processing.cpp)
 add_library(laser_mapping src/LIVMapper.cpp)
 add_library(utils src/utils.cpp)
 
-ament_target_dependencies(utils ${add_dependencies})
+ament_target_dependencies(utils ${dependencies})
 
 ament_target_dependencies(vio ${dependencies} )
 ament_target_dependencies(lio ${dependencies})

@@ -11,6 +11,7 @@ which is included as part of this source code package.
 */
 
 #include "LIVMapper.h"
+#include "io_utils.h"
 #include <vikit/camera_loader.h>
 
 using namespace Sophus;
@@ -116,7 +117,7 @@ void LIVMapper::readParameters(rclcpp::Node::SharedPtr &node)
   this->node->declare_parameter<bool>("publish.pub_effect_point_en", false);
   this->node->declare_parameter<bool>("publish.dense_map_en", false);
   this->node->declare_parameter<bool>("common.use_bag", false);
-  this->node->declare_parameter<std::string>("common.bag_name",bag_name_);
+  this->node->declare_parameter<std::string>("common.bag_name",bag_name);
 
   // get parameter
   this->node->get_parameter("common.lid_topic", lid_topic);
@@ -177,7 +178,7 @@ void LIVMapper::readParameters(rclcpp::Node::SharedPtr &node)
   this->node->get_parameter("publish.pub_effect_point_en", pub_effect_point_en);
   this->node->get_parameter("publish.dense_map_en", dense_map_en);
   this->node->get_parameter("common.use_bag", use_bag_);
-  this->node->get_parameter("common.bag_name", bag_name_);
+  this->node->get_parameter("common.bag_name", bag_name);
 
 }
 
@@ -616,7 +617,7 @@ void LIVMapper::run(rclcpp::Node::SharedPtr &node)
   if (use_bag_) {
     // 离线模式：用单独线程顺序读 bag，把消息喂给已有回调
     std::thread bag_thread([this]() {
-      RosbagIO bag(bag_name_);
+      RosbagIO bag(bag_name);
       if (lidar_en)
         bag.AddPointCloudHandle(lid_topic,
           [this](const sensor_msgs::msg::PointCloud2::ConstSharedPtr &m) {
