@@ -28,7 +28,7 @@
 class RosbagIO {
 public:
     // 传入 rosbag2 的目录路径（包含 metadata.yaml 的文件夹），或完整 uri
-    explicit RosbagIO(std::string bag_filename )
+    explicit RosbagIO(std::string bag_filename)
     {
         assert(bag_filename != "");
         // rosbag2 录制的是“目录”，open 时传目录即可

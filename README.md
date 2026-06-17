@@ -17,6 +17,17 @@ Eigen>=3.3.4, Follow [Eigen Installation](https://eigen.tuxfamily.org/index.php?
 
 OpenCV>=4.2, Follow [Opencv Installation](http://opencv.org/).
 
+sudo apt update
+
+sudo apt install -y \
+  build-essential \
+  cmake \
+  git \
+  pkg-config \
+  libpcl-dev \
+  libeigen3-dev \
+  libopencv-dev
+
 ### 2.3 Sophus
 
 #### Binary installation

@@ -11,6 +11,7 @@ which is included as part of this source code package.
 */
 
 #include "LIVMapper.h"
+#include "io_utils.h"
 #include <vikit/camera_loader.h>
 #include "io_utils.h"
 
