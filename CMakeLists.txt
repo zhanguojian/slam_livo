@@ -98,7 +98,6 @@ find_package(image_transport REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(Sophus REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(fmt REQUIRED)
 
@@ -111,9 +110,9 @@ include_directories(
   ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-  ${Sophus_INCLUDE_DIRS}
   ${vikit_common_INCLUDE_DIRS}
   ${vikit_ros_INCLUDE_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/thridpart/Sophus   # 使 #include <sophus/se3.hpp> 生效
   include
 )
 
