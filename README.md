@@ -28,64 +28,35 @@ sudo apt install -y \
   libeigen3-dev \
   libopencv-dev
 
-#sophus库已经内置进代码三方库中，不用再下载安装
-<!-- ### 2.3 Sophus
 
-#### Binary installation
-```bash
-sudo apt install ros-$ROS_DISTRO-sophus
-```
-
-#### Building from source
-Sophus Installation for the non-templated/double-only version.
-
-```bash
-git clone https://github.com/strasdat/Sophus.git
-cd Sophus
-git checkout a621ff
-mkdir build && cd build && cmake ..
-make
-sudo make install
-``` -->
-
-<!-- if build fails due to `so2.cpp:32:26: error: lvalue required as left operand of assignment`, modify the code as follows:
-
-**so2.cpp**
-```diff
-namespace Sophus
-{
-
-SO2::SO2()
-{
--  unit_complex_.real() = 1.;
--  unit_complex_.imag() = 0.;
-+  unit_complex_.real(1.);
-+  unit_complex_.imag(0.);
-}
-``` -->
-
-### 2.4 Vikit
+### 3 Vikit
 
 Vikit contains camera models, some math and interpolation functions that we need. Vikit is a catkin project, therefore, download it into your catkin workspace source folder.
-
-For well-known reasons, ROS2 does not have a direct global parameter server and a simple method to obtain the corresponding parameters. For details, please refer to https://discourse.ros.org/t/ros2-global-parameter-server-status/10114/11. I use a special way to get camera parameters in Vikit. While the method I've provided so far is quite simple and not perfect, it meets my needs. More contributions to improve `rpg_vikit` are hoped.
 
 ```bash
 # Different from the one used in fast-livo1
 cd livo_ws/src
-git clone https://github.com/Robotic-Developer-Road/rpg_vikit.git 
+git clone https://github.com/zhanguojian/vpg_vikit.git 
 ```
 
-Thanks to the following repositories for the code reference:
+Building vikit_common
+```bash
+cd vikit_common
+mkdir build && cd build
+cmake .. && make -j$(nproc)
+sudo make install
+```
 
-- [uzh-rpg/rpg_vikit](https://github.com/uzh-rpg/rpg_vikit)
-- [xuankuzcr/rpg_vikit](https://github.com/xuankuzcr/rpg_vikit)
-- [uavfly/vikit](https://github.com/uavfly/vikit)
-
+Building vikit_ros
+```bash
+# Move vikit_ros to your workspace src directory
+cd ~/ros2_ws
+colcon build --symlink-install --packages-select vikit_ros
+```
 
 **需要先编译rqg_vikit 再对slam仓库进行编译**
 
-## 3. Build
+## 4. Build
 
 Clone the repository and colcon build:
 
