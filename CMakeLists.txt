@@ -184,7 +184,6 @@ target_link_libraries(fastlivo_mapping
   utils
   ${PCL_LIBRARIES}
   ${OpenCV_LIBRARIES}
-  ${Sophus_LIBRARIES}
   ${Boost_LIBRARIES}
 )
 
@@ -217,7 +216,6 @@ ament_export_dependencies(
   Eigen3
   PCL
   OpenCV 
-  Sophus
 )
 
 ament_package()

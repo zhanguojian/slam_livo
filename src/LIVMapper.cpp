@@ -559,8 +559,8 @@ void LIVMapper::savePCD()
 {
   if (pcd_save_en && (pcl_wait_save->points.size() > 0 || pcl_wait_save_intensity->points.size() > 0) && pcd_save_interval < 0) 
   {
-    std::string raw_points_dir = std::string(ROOT_DIR) + "Log/pcd/all_raw_points.pcd";
-    std::string downsampled_points_dir = std::string(ROOT_DIR) + "Log/pcd/all_downsampled_points.pcd";
+    std::string raw_points_dir = std::string(ROOT_DIR) + "map/all_raw_points.pcd";
+    std::string downsampled_points_dir = std::string(ROOT_DIR) + "map/all_downsampled_points.pcd";
     pcl::PCDWriter pcd_writer;
 
     if (img_en)

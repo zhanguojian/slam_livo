@@ -28,7 +28,8 @@ sudo apt install -y \
   libeigen3-dev \
   libopencv-dev
 
-### 2.3 Sophus
+#sophus库已经内置进代码三方库中，不用再下载安装
+<!-- ### 2.3 Sophus
 
 #### Binary installation
 ```bash
@@ -45,9 +46,9 @@ git checkout a621ff
 mkdir build && cd build && cmake ..
 make
 sudo make install
-```
+``` -->
 
-if build fails due to `so2.cpp:32:26: error: lvalue required as left operand of assignment`, modify the code as follows:
+<!-- if build fails due to `so2.cpp:32:26: error: lvalue required as left operand of assignment`, modify the code as follows:
 
 **so2.cpp**
 ```diff
@@ -61,7 +62,7 @@ SO2::SO2()
 +  unit_complex_.real(1.);
 +  unit_complex_.imag(0.);
 }
-```
+``` -->
 
 ### 2.4 Vikit
 
@@ -82,6 +83,8 @@ Thanks to the following repositories for the code reference:
 - [uavfly/vikit](https://github.com/uavfly/vikit)
 
 
+**需要先编译rqg_vikit 再对slam仓库进行编译**
+
 ## 3. Build
 
 Clone the repository and colcon build:
@@ -91,7 +94,7 @@ cd ~/livo_ws/src
 git clone  https://github.com/zhanguojian/slam_livo.git
 cd ../
 colcon build --symlink-install --continue-on-error
-source ~/livo_ws/install/setup.bash
+source ~/livo_ws/install/setup.zsh
 ```
 
 ### Run the demo
